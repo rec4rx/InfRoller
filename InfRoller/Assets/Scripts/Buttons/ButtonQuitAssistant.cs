@@ -13,5 +13,7 @@ public class ButtonQuitAssistant : Button
     private void OnClick()
     {
         Debug.Log("OnClick Quit!");
+        //TODO: There should be an confirm popup raised here.
+        Application.Quit();
     }
 }
