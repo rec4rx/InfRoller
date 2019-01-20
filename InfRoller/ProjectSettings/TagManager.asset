@@ -44,12 +44,12 @@ TagManager:
   - name: Background
     uniqueID: 3578731797
     locked: 0
-  - name: Player
+  - name: LowerPlayer
     uniqueID: 1958538945
     locked: 0
-  - name: UpperPlayer
+  - name: Player
     uniqueID: 229983207
     locked: 0
-  - name: LowerPlayer
+  - name: UpperPlayer
     uniqueID: 3077783711
     locked: 0
