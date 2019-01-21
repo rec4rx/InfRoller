@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 /// <summary>
 /// The <c>Game controller</c> class.
@@ -25,7 +27,7 @@ public class GameController : MonoBehaviour
     //endUI
     [SerializeField] GameObject _endUIObj = null;
     //score tect
-    [SerializeField] GameObject _scoreText = null;
+    [SerializeField] Text _scoreText = null;
 
     // game const(s)
 
@@ -52,8 +54,6 @@ public class GameController : MonoBehaviour
 
     // current position X to put next pattern (to prevent overlap)
     private float _currentPatternX = 0.0f;
-    // is the game started yet? (Default by false, until the first touch
-    private bool _isGameStart = false;
     // list current patterns used
     private List<Pattern> _currentPatterns = new List<Pattern>();
     //next goal to expand ground
@@ -80,12 +80,6 @@ public class GameController : MonoBehaviour
         }
 
         HandleTouch();
-
-        //game have not started yet, nothing to do
-        if (!_isGameStart)
-        {
-            return;
-        }
 
         if (_player == null || _gameCamera == null)
         {
@@ -141,7 +135,8 @@ public class GameController : MonoBehaviour
     private void OnDisable()
     {
         //remove events
-        Player.endgameDelegate += End;
+        Player.endgameDelegate -= End;
+        Player.scoreDelegate -= AddScore;
     }
 
     //init stats
@@ -155,6 +150,7 @@ public class GameController : MonoBehaviour
 
         //delegate
         Player.endgameDelegate += End;
+        Player.scoreDelegate += AddScore;
     }
 
     //init Maps 
@@ -176,9 +172,10 @@ public class GameController : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            if (!_isGameStart)
+            // Check if the mouse was clicked over a UI element
+            if (EventSystem.current.IsPointerOverGameObject())
             {
-                _isGameStart = true;
+                Debug.Log("Clicked on the UI");
                 return;
             }
 
@@ -216,6 +213,13 @@ public class GameController : MonoBehaviour
         return pattern;
     }
 
+    //addscore
+    public void AddScore ()
+    {
+        _score += SCORE_STEP;
+        _scoreText.text = _score.ToString();
+    }
+
     //end
     public void End()
     {   
@@ -227,8 +231,33 @@ public class GameController : MonoBehaviour
         _isEnd = true;
         Time.timeScale = 0;
         _endUIObj.SetActive(true);
+
+        StartCoroutine(SubmitCurrentScore());
     }
 
+    //submit score 
+    private IEnumerator SubmitCurrentScore()
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("userName", "Quai");
+        form.AddField("score", _score.ToString());
+        UnityWebRequest www = UnityWebRequest.Post(NetDef.API_SUBMIT_SCORE, form);
+        yield return www.SendWebRequest();
+
+        if (www.isNetworkError || www.isHttpError)
+        {
+            Debug.Log(www.error);
+        }
+        else
+        {
+            string msg = NetDef.Response[www.responseCode];
+            Debug.Log(msg);
+        }
+    }
+
+    /// <summary>
+    /// Replay clicked on End.
+    /// </summary>
     public void OnClickedReplay ()
     {
         Time.timeScale = 1;
@@ -264,6 +293,10 @@ public class GameController : MonoBehaviour
         Time.timeScale = 1;
     }
 
+    /// <summary>
+    /// On the application pause.
+    /// </summary>
+    /// <param name="pause">If set to <c>true</c> pause.</param>
     private void OnApplicationPause(bool pause)
     {
         if (pause)

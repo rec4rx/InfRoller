@@ -9,8 +9,9 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     //dead event delegate
-    public delegate void EndgameDelegate();
-    public static EndgameDelegate endgameDelegate;
+    public delegate void PlayerDelegate();
+    public static PlayerDelegate endgameDelegate;
+    public static PlayerDelegate scoreDelegate;
 
     //rigid body
     private Rigidbody2D _rigidbody = null;
@@ -55,14 +56,25 @@ public class Player : MonoBehaviour
     {
         GameObject collisionObj = collision.gameObject;
 
-        if (collisionObj.CompareTag("Ground") == true)
+        if (collisionObj.CompareTag(TagName.GROUND) == true)
         {
             //land
             _isJumping = false;
-        } else if (collisionObj.CompareTag("Block") == true)
+        } else if (collisionObj.CompareTag(TagName.BLOCK) == true)
         {
             //game end, call delegate
             endgameDelegate();
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        GameObject collisionObj = collision.gameObject;
+
+        if (collisionObj.CompareTag(TagName.SCORE) == true)
+        {
+            //scored!
+            scoreDelegate();
         }
     }
 }
