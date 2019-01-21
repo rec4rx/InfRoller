@@ -30,10 +30,7 @@ public class Pattern : RecyclingObject
     //init blocks for using poll correcty
     private void ReInitBlocks()
     {
-        foreach (Block block in _blocks)
-        {
-            block.IsPassed = false;
-        }
+        //do something that needed to init block
     }
 
     //for editor: auto fill blocks into pattern, also calculate its width

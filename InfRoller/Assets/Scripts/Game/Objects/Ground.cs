@@ -9,7 +9,7 @@ using UnityEngine;
 public class Ground : MonoBehaviour
 {
     //list contains parts
-    [SerializeField] private List<GameObject> _parts;
+    [SerializeField] private List<GameObject> _parts = null;
     //how many times expanded
     private int _expandTime = 0;
     // Start is called before the first frame update

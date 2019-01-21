@@ -21,11 +21,6 @@ public class Block : MonoBehaviour
         return _spriteRenderer;
     }
 
-    public bool IsPassed {
-        get;
-        set;
-    }
-
     //get Block's minX
     public float MinX()
     {
