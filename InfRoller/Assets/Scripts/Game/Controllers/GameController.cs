@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    //game camera
+    // game camera
     [SerializeField] Camera _gameCamera = null;
-    //player
+    // player
     [SerializeField] Player _player = null;
-    //the pool
+    // the pool
     [SerializeField] RecyclingObjectPool _recyclingObjectPool = null;
-    /// <summary>
-    /// game const
-    /// </summary>
+    // ground
+    [SerializeField] Ground _ground = null;
+
+    // game const(s)
 
     // max number of pattern on scene
     private float MAX_PATTERNS_NUMBER = 5;
@@ -26,17 +27,19 @@ public class GameController : MonoBehaviour
     private float MINIMUM_PATTERN_DISTANCE = 2.0f;
     // starting scrolling speed
     private float PLAYER_START_SPEED = 2.0f;
+    // expand Ground Width
+    private float GROUND_EXPAND_DISTANCE = 24.0f;
 
-    /// <summary>
-    /// game stats
-    /// </summary>
+    // game stats
+
     // current position X to put next pattern (to prevent overlap)
     private float _currentPatternX = 0.0f;
     // is the game started yet? (Default by false, until the first touch
     private bool _isGameStart = false;
     // list current patterns used
     private List<Pattern> _currentPatterns = new List<Pattern>();
-
+    //next goal to expand ground
+    private float _nextGroundExpandX = 0.0f;
     // Start is called before the first frame update
     void Start()
     {
@@ -52,17 +55,50 @@ public class GameController : MonoBehaviour
         //{
         //    return;
         //}
+
+        if (_player == null || _gameCamera == null)
+        {
+            return;
+        }
+        
         _player.transform.position += new Vector3(PLAYER_START_SPEED * Time.deltaTime, 0, 0);
         _gameCamera.transform.position = new Vector3(_player.transform.position.x + 1.5f, _gameCamera.transform.position.y, _gameCamera.transform.position.z);
 
+        //temporary list to keep patterns out of screen
+        List<Pattern> willRemovedPatterns = new List<Pattern>();
         foreach (Pattern pattern in _currentPatterns)
         {
-            //remove patterns which out sight of screen
+            //Add patterns out of screen to temp list
             if (pattern.transform.position.x + pattern.Width / 2.0f < _player.transform.position.x - START_PATTERN_X)
             {
-                _currentPatterns.Remove(pattern);
-                _recyclingObjectPool.Release(pattern.gameObject);
-                InsertRandomPattern();
+                willRemovedPatterns.Add(pattern);
+            }
+        }
+
+        //remove patterns out of screen
+        foreach (Pattern pattern in willRemovedPatterns)
+        {
+            //remove from pattern list
+            _currentPatterns.Remove(pattern);
+
+            //pool release
+            _recyclingObjectPool.Release(pattern.gameObject);
+
+            //imediately insert new pattern
+            InsertRandomPattern();
+        }
+
+        //clear the tmp list
+        willRemovedPatterns.Clear();
+
+        //grounds
+        if (_player.transform.position.x >= _nextGroundExpandX)
+        {
+            _nextGroundExpandX += GROUND_EXPAND_DISTANCE;
+
+            if (_ground != null)
+            {
+                _ground.VirtualExpand(GROUND_EXPAND_DISTANCE);
             }
         }
     }
@@ -70,7 +106,11 @@ public class GameController : MonoBehaviour
     //init stats
     private void InitStats ()
     {
+        //default max fps is 60
+        Application.targetFrameRate = 60;
+
         _currentPatternX = START_PATTERN_X;
+        _nextGroundExpandX = GROUND_EXPAND_DISTANCE / 2.0f;
     }
 
     //init Maps 
@@ -90,7 +130,7 @@ public class GameController : MonoBehaviour
         if (pattern != null)
         {
             float patternWidth = pattern.Width;
-            pattern.transform.position = new Vector3(_currentPatternX + patternWidth / 2.0f, 0, 0);
+            pattern.transform.position = new Vector3(_currentPatternX, 0, 0);
             _currentPatternX += patternWidth + MINIMUM_PATTERN_DISTANCE;
             _currentPatterns.Add(pattern);
         }

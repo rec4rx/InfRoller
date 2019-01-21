@@ -20,6 +20,7 @@ public class Pattern : RecyclingObject
     //list of blocks in this pattern
     [SerializeField] List<Block> _blocks = new List<Block>();
 
+    //override from base
     public override void Init()
     {
         base.Init();
