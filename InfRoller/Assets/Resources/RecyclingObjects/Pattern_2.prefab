@@ -85,6 +85,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Obstacle_1x2
       objectReference: {fileID: 0}
+    - target: {fileID: 4130336729151042739, guid: 5ffe88e291c594134a94a706fff6f8fb,
+        type: 3}
+      propertyPath: m_TagString
+      value: Block
+      objectReference: {fileID: 0}
     - target: {fileID: 18544476411820278, guid: 5ffe88e291c594134a94a706fff6f8fb,
         type: 3}
       propertyPath: m_LocalPosition.x

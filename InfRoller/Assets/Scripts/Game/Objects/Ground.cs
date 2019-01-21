@@ -30,6 +30,7 @@ public class Ground : MonoBehaviour
     /// <param name="groundWidth">Ground width.</param>
     public void VirtualExpand (float groundWidth)
     {
+        _expandTime++;
         if (_expandTime % 2 == 0)
         {
             _parts[1].transform.position = _parts[0].transform.position + new Vector3(groundWidth, 0, 0);

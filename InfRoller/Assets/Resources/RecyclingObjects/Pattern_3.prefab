@@ -1,31 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!61 &3851011506742896593
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8924256458712496925}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.4, y: 2.4}
-    newSize: {x: 2.4, y: 2.4}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 2.4, y: 2.4}
-  m_EdgeRadius: 0
 --- !u!1 &7769622075952176693
 GameObject:
   m_ObjectHideFlags: 0
@@ -73,6 +47,32 @@ MonoBehaviour:
   _width: 0.72
   _blocks:
   - {fileID: 727669131033600153}
+--- !u!61 &3851011506742896593
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8924256458712496925}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 2.4, y: 2.4}
+    newSize: {x: 2.4, y: 2.4}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 2.4, y: 2.4}
+  m_EdgeRadius: 0
 --- !u!1001 &7769622074686996566
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -84,6 +84,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Obstacle_2x1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1155857114532133707, guid: dd819f8a645784a4f9eb28bfa3bb5bea,
+        type: 3}
+      propertyPath: m_TagString
+      value: Block
       objectReference: {fileID: 0}
     - target: {fileID: 1397387341199434724, guid: dd819f8a645784a4f9eb28bfa3bb5bea,
         type: 3}

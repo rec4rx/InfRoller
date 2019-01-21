@@ -1,7 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
+/// <summary>
+/// The <c>Game controller</c> class.
+/// All Ingame activities
+/// </summary>
 public class GameController : MonoBehaviour
 {
     // game camera
@@ -13,22 +19,34 @@ public class GameController : MonoBehaviour
     // ground
     [SerializeField] Ground _ground = null;
 
+    //ui
+    //pauseUI
+    [SerializeField] GameObject _pauseUIObj = null;
+    //endUI
+    [SerializeField] GameObject _endUIObj = null;
+    //score tect
+    [SerializeField] GameObject _scoreText = null;
+
     // game const(s)
 
     // max number of pattern on scene
-    private float MAX_PATTERNS_NUMBER = 5;
+    private readonly float MAX_PATTERNS_NUMBER = 5;
     // max number of pattern in resources
-    private int MAX_PATTERNS_PREFAB = 5;
+    private readonly int MAX_PATTERNS_PREFAB = 5;
     // Pattern name prefix
-    private string PATTER_NAME_PREFIX = "Pattern_";
+    private readonly string PATTER_NAME_PREFIX = "Pattern_";
     // the minimum value to Player from the first Pattern at the begining
-    private float START_PATTERN_X = 5.0f;
+    private readonly float START_PATTERN_X = 5.0f;
     // minimum distance between two patterns
-    private float MINIMUM_PATTERN_DISTANCE = 2.0f;
+    private readonly float MINIMUM_PATTERN_DISTANCE = 2.0f;
     // starting scrolling speed
-    private float PLAYER_START_SPEED = 2.0f;
+    private readonly float PLAYER_START_SPEED = 2.5f;
+    // player jump power
+    private readonly float PLAYER_JUMP_POWER = 9f;
     // expand Ground Width
-    private float GROUND_EXPAND_DISTANCE = 24.0f;
+    private readonly float GROUND_EXPAND_DISTANCE = 24.0f;
+    // score step
+    private readonly int SCORE_STEP = 10;
 
     // game stats
 
@@ -40,6 +58,11 @@ public class GameController : MonoBehaviour
     private List<Pattern> _currentPatterns = new List<Pattern>();
     //next goal to expand ground
     private float _nextGroundExpandX = 0.0f;
+    //check if the game is end or not
+    private bool _isEnd = false;
+    //score
+    private int _score = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -50,18 +73,30 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //game has ended, nothing to do
+        if (_isEnd)
+        {
+            return;
+        }
+
+        HandleTouch();
+
         //game have not started yet, nothing to do
-        //if (!_isGameStart)
-        //{
-        //    return;
-        //}
+        if (!_isGameStart)
+        {
+            return;
+        }
 
         if (_player == null || _gameCamera == null)
         {
             return;
         }
-        
-        _player.transform.position += new Vector3(PLAYER_START_SPEED * Time.deltaTime, 0, 0);
+
+        if (!_player.IsJumping)
+        {
+            _player.Move(PLAYER_START_SPEED);
+        }
+       
         _gameCamera.transform.position = new Vector3(_player.transform.position.x + 1.5f, _gameCamera.transform.position.y, _gameCamera.transform.position.z);
 
         //temporary list to keep patterns out of screen
@@ -103,6 +138,12 @@ public class GameController : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        //remove events
+        Player.endgameDelegate += End;
+    }
+
     //init stats
     private void InitStats ()
     {
@@ -110,7 +151,10 @@ public class GameController : MonoBehaviour
         Application.targetFrameRate = 60;
 
         _currentPatternX = START_PATTERN_X;
-        _nextGroundExpandX = GROUND_EXPAND_DISTANCE / 2.0f;
+        _nextGroundExpandX = GROUND_EXPAND_DISTANCE / 1.5f;
+
+        //delegate
+        Player.endgameDelegate += End;
     }
 
     //init Maps 
@@ -119,6 +163,32 @@ public class GameController : MonoBehaviour
         for (int i = 0; i < MAX_PATTERNS_NUMBER; i++)
         {
             InsertRandomPattern();
+        }
+    }
+
+    //Touch Handler
+    private void HandleTouch ()
+    {
+        if (_player == null)
+        {
+            return;
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (!_isGameStart)
+            {
+                _isGameStart = true;
+                return;
+            }
+
+            if (_player.IsJumping)
+            {
+                //on jump, can't jump
+                return;
+            }
+
+            _player.Jump(PLAYER_JUMP_POWER);
         }
     }
 
@@ -144,5 +214,67 @@ public class GameController : MonoBehaviour
         Pattern pattern = patternObj.GetComponent<Pattern>();
 
         return pattern;
+    }
+
+    //end
+    public void End()
+    {   
+        if (_isEnd)
+        {
+            return;
+        }
+
+        _isEnd = true;
+        Time.timeScale = 0;
+        _endUIObj.SetActive(true);
+    }
+
+    public void OnClickedReplay ()
+    {
+        Time.timeScale = 1;
+        _endUIObj.SetActive(false);
+        SceneManager.LoadScene(SceneName.GAME);
+    }
+
+    //pause 
+    public void OnClickedPause ()
+    {
+        if (_pauseUIObj.activeSelf)
+        {
+            return;
+        }
+
+        Time.timeScale = 0;
+        _pauseUIObj.SetActive(true);
+    }
+
+    //go home from pause
+    public void OnClickedHome ()
+    {
+        Time.timeScale = 1;
+        _pauseUIObj.SetActive(false);
+        _endUIObj.SetActive(false);
+        SceneManager.LoadScene(SceneName.HOME);
+    }
+
+    //resume from pause
+    public void OnClickedResume ()
+    {
+        _pauseUIObj.SetActive(false);
+        Time.timeScale = 1;
+    }
+
+    private void OnApplicationPause(bool pause)
+    {
+        if (pause)
+        {
+            Time.timeScale = 0;
+            _pauseUIObj.SetActive(true);
+        }
+        else
+        {
+            _pauseUIObj.SetActive(false);
+            Time.timeScale = 1;
+        }
     }
 }

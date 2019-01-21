@@ -141,6 +141,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Obstacle_1x1
       objectReference: {fileID: 0}
+    - target: {fileID: 3915862376301276503, guid: a13d6e431a32d4669a8d922ddc27e26f,
+        type: 3}
+      propertyPath: m_TagString
+      value: Block
+      objectReference: {fileID: 0}
     - target: {fileID: 4669181120882246426, guid: a13d6e431a32d4669a8d922ddc27e26f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -233,6 +238,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Obstacle_1x1 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3915862376301276503, guid: a13d6e431a32d4669a8d922ddc27e26f,
+        type: 3}
+      propertyPath: m_TagString
+      value: Block
       objectReference: {fileID: 0}
     - target: {fileID: 4669181120882246426, guid: a13d6e431a32d4669a8d922ddc27e26f,
         type: 3}
@@ -336,6 +346,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Obstacle_1x1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3915862376301276503, guid: a13d6e431a32d4669a8d922ddc27e26f,
+        type: 3}
+      propertyPath: m_TagString
+      value: Block
       objectReference: {fileID: 0}
     - target: {fileID: 4669181120882246426, guid: a13d6e431a32d4669a8d922ddc27e26f,
         type: 3}
